@@ -6,7 +6,7 @@
     body {
       font-family: 'Press Start 2P', cursive; /* Use a fun font! */
       text-align: center;
-      background-color: #f0f0f0; /* Light gray background */
+      background-color: #ed92cc; /*background */
     }
 
     h1 {
@@ -22,7 +22,7 @@
     }
 
     #item-list li {
-      background-color: #fff; /* White list items */
+      background-color: #cd7aa2; /* list items */
       padding: 10px;
       margin-bottom: 5px;
       border-radius: 5px;
@@ -46,7 +46,7 @@
 
     #add-item-form button {
       padding: 8px 15px;
-      background-color: #4CAF50; /* Green */
+      background-color: #a5b6e0; /* Green */
       color: white;
       border: none;
       border-radius: 5px;
@@ -108,6 +108,8 @@
     <button type="button" onclick="addItem()">Add</button>
   </form>
 
+  <button onclick="saveItems()">Save Ideas</button>
+
   <script>
     const itemList = document.getElementById('item-list');
 
@@ -119,6 +121,16 @@
         itemList.appendChild(listItem);
         document.getElementById('new-item').value = ""; // Clear the input field
       }
+    }
+
+    function saveItems() {
+      const items = [];
+      const listItems = itemList.querySelectorAll('li');
+      listItems.forEach(item => {
+        items.push(item.textContent);
+      });
+      localStorage.setItem('prizeIdeas', JSON.stringify(items));
+      alert('Prize ideas saved!');
     }
   </script>
  <a href="yes.html"><button>Back</button></a>
