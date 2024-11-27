@@ -104,35 +104,73 @@
   </ul>
 
   <form id="add-item-form">
-    <input type="text" id="new-item" placeholder="Enter prize idea...">
-    <button type="button" onclick="addItem()">Add</button>
+    <input type="text" id="new-item" placeholder="Enter item">
+    <button type="submit">Add</button>
   </form>
 
-  <button onclick="saveItems()">Save Ideas</button>
+  <div id="saved-data">
+    <h2>Saved Ideas:</h2>
+    <p>No ideas saved yet.</p>
+  </div>
 
   <script>
     const itemList = document.getElementById('item-list');
+    const addItemForm = document.getElementById('add-item-form');
+    const savedDataDiv = document.getElementById('saved-data');
 
-    function addItem() {
-      const newItem = document.getElementById('new-item').value;
+    // Load saved ideas from localStorage on page load
+    let savedIdeas = JSON.parse(localStorage.getItem('gameIdeas')) || [];
+
+    function displaySavedIdeas() {
+      savedDataDiv.innerHTML = `
+        <h2>Saved Ideas:</h2>
+        <p>${savedIdeas.length > 0 ? savedIdeas.join('<br>') : 'No ideas saved yet.'}</p>
+      `;
+    }
+
+    // Update localStorage and display saved ideas
+    function saveIdea(newIdea) {
+      savedIdeas.push(newIdea);
+      localStorage.setItem('gameIdeas', JSON.stringify(savedIdeas));
+      displaySavedIdeas();
+    }
+
+    // Function to remove an item from the list and localStorage
+    function removeItem(index) {
+      itemList.removeChild(itemList.children[index]);
+      savedIdeas.splice(index, 1); // Remove from savedIdeas array
+      localStorage.setItem('gameIdeas', JSON.stringify(savedIdeas));
+      displaySavedIdeas();
+    }
+
+    addItemForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const newItemInput = document.getElementById('new-item');
+      const newItem = newItemInput.value.trim();
+
       if (newItem !== "") {
-        const listItem = document.createElement('li');
-        listItem.textContent = newItem;
-        itemList.appendChild(listItem);
-        document.getElementById('new-item').value = ""; // Clear the input field
-      }
-    }
+        const newListItem = document.createElement('li');
+        newListItem.textContent = newItem;
 
-    function saveItems() {
-      const items = [];
-      const listItems = itemList.querySelectorAll('li');
-      listItems.forEach(item => {
-        items.push(item.textContent);
-      });
-      localStorage.setItem('prizeIdeas', JSON.stringify(items));
-      alert('Prize ideas saved!');
-    }
+        // Add a delete button to each list item
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'X';
+        deleteButton.addEventListener('click', () => {
+          removeItem(Array.from(itemList.children).indexOf(newListItem));
+        });
+        newListItem.appendChild(deleteButton);
+
+        itemList.appendChild(newListItem);
+        newItemInput.value = ""; // Clear the input field
+        saveIdea(newItem);
+      }
+    });
+
+    // Display initially saved ideas
+    displaySavedIdeas();
   </script>
- <a href="yes.html"><button>Back</button></a>
+   <a href="yes.html"><button>Back</button></a>
+
 </body>
 </html>
